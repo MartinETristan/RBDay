@@ -5,7 +5,7 @@ export const timeline = [
 		at: new Date(2025, 7, 31).getTime(),
 		date: '31 de agosto de 2025',
 		title: 'Nos conocimos',
-		place: 'Fiesta de Oscar de Rotarac',
+		place: 'Fiesta de Oscar',
 		coords: [-97.5030878, 25.8584979] as [number, number] | null,
 		photos: ['/photos/31_agosto.webp', '/photos/31_agosto2.webp'] as string[]
 	},
@@ -21,7 +21,7 @@ export const timeline = [
 		at: new Date(2025, 8, 16).getTime(),
 		date: '16 de septiembre de 2025',
 		title: 'Nuestro primer beso',
-		place: 'Parque Lineal Cantinflas',
+		place: 'Cita en el Parque Lineal',
 		coords: [-97.4712235, 25.8537587] as [number, number] | null,
 		photos: [] as string[]
 	},

@@ -8,7 +8,25 @@ const CROSSFADE_MS = 1500;
 const STEP_MS = 100;
 
 let current: HTMLAudioElement | null = null;
+// Mapa interno de intervalos de fade; no es estado reactivo.
+// eslint-disable-next-line svelte/prefer-svelte-reactivity
 const fades = new Map<HTMLAudioElement, number>();
+/** Un reproductor por canción: al volver a una canción se reutiliza (no se descarga otra vez). */
+const players: HTMLAudioElement[] = [];
+
+function audioFor(index: number) {
+	let a = players[index];
+	if (!a) {
+		const created = new Audio(tracks[index].src);
+		created.loop = true;
+		created.volume = 0;
+		created.addEventListener('error', () => {
+			if (current === created) music.failed = true;
+		});
+		players[index] = a = created;
+	}
+	return a;
+}
 let wanted = 0;
 
 function ramp(a: HTMLAudioElement, to: number, then?: () => void) {
@@ -33,14 +51,10 @@ function crossfadeTo(index: number) {
 		return;
 	}
 	const old = current;
-	const a = new Audio(tracks[index].src);
-	a.loop = true;
-	a.volume = 0;
+	const a = audioFor(index);
 	a.muted = music.muted;
-	a.addEventListener('error', () => {
-		if (current === a) music.failed = true;
-	});
-	a.play().catch(() => {});
+	// Si aún se estaba desvaneciendo, `ramp` cancela ese fade y sube desde el volumen actual.
+	if (a.paused) a.play().catch(() => {});
 	current = a;
 	music.index = index;
 	music.failed = false;

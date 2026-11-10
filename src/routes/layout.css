@@ -76,9 +76,11 @@ html.horiz body {
 	height: 100svh;
 }
 
-/* Navegación bloqueada (antes de pulsar "Iniciar"): no se puede desplazar la página */
-html.nav-locked,
-html.nav-locked body {
+/* Navegación bloqueada (portada, visor de la galería): no se puede desplazar la página.
+   Solo en <html>: si el <body> también lleva overflow hidden, en modo horizontal se vuelve un
+   contenedor de 100vw que recorta la fila de escenas, el ancho desplazable cae a una pantalla y
+   el scroll salta a la primera escena. `touch-action` en <html> ya bloquea el arrastre táctil. */
+html.nav-locked {
 	overflow: hidden !important;
 	touch-action: none;
 }

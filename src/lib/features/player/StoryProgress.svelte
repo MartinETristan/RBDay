@@ -55,10 +55,15 @@
 	});
 </script>
 
-<!-- Barra de progreso estilo historias: una pieza por escena -->
+<!-- Barra de progreso estilo historias: una pieza por escena. Oculta en la portada. -->
 <nav
 	aria-label="Progreso"
-	class="fixed inset-x-3 top-3 z-50 flex gap-1 rounded-full bg-cream/75 p-1.5 backdrop-blur-sm horiz:inset-x-6"
+	aria-hidden={active === 0}
+	inert={active === 0}
+	class="fixed inset-x-3 top-3 z-50 flex gap-1 rounded-full bg-cream/75 p-1.5 backdrop-blur-sm transition-opacity duration-500 horiz:inset-x-6 {active ===
+	0
+		? 'pointer-events-none opacity-0'
+		: 'opacity-100'}"
 >
 	{#each scenes as s, i (i)}
 		<button

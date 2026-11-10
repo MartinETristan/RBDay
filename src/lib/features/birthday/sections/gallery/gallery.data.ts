@@ -1,48 +1,141 @@
 /**
- * Galería: cada página es una escena. Fotos en `static/photos/`, videos en `static/videos/`.
- * Las páginas de "nosotros" solo llevan fotos `nosotros*`; "ella" tiene su propia escena.
+ * Galería: cada página es una escena (6 elementos; "ella" tiene 4). Fotos en `static/photos/`,
+ * videos en `static/videos/`.
+ *
+ * Para personalizar un elemento, llena su `date` (se ve en la tarjeta y en primer plano) y su
+ * `text` (solo en primer plano). Con `` (vacío) no se muestra nada.
+ * Escríbelos entre comillas invertidas (`...`): así puedes usar ' y " y hasta saltos de línea. El orden de aquí es el de la página.
  */
-export type GalleryItem = { type: 'photo' | 'video'; src: string; alt: string };
+export type GalleryItem = {
+	type: 'photo' | 'video';
+	src: string;
+	alt: string;
+	date: string;
+	text: string;
+};
 export type GalleryPage = { kind: 'nosotros' | 'ella'; items: GalleryItem[] };
 
-const photo = (name: string, alt: string): GalleryItem => ({
-	type: 'photo',
-	src: `/photos/${name}.webp`,
-	alt
-});
-const video = (name: string, alt: string): GalleryItem => ({
-	type: 'video',
-	src: `/videos/${name}.webm`,
-	alt
-});
-
-// nosotros1 … nosotros29 (el archivo del 20 se llama `nosotro20`).
-const us = Array.from({ length: 29 }, (_, i) =>
-	photo(i + 1 === 20 ? 'nosotro20' : `nosotros${i + 1}`, 'Nosotros')
-);
-
-const videos = [
-	video('laguito_us_2', 'Nosotros en el Laguito'),
-	video('disfraces_ratatuille', 'Nuestros disfraces de Ratatouille'),
-	video('cafecito', 'Cafecito'),
-	video('starfire_robin_costumes', 'Starfire y Robin'),
-	video('pumpinking_video', 'Pumpkin King'),
-	video('laguito_us_slomo', 'Laguito en cámara lenta'),
-	video('filtro', 'Con filtro')
+export const galleryPages: GalleryPage[] = [
+	{
+		kind: 'nosotros',
+		items: [
+			{
+				type: 'photo',
+				src: '/photos/nosotros1.webp',
+				alt: 'Nosotros',
+				date: `28/02/26`,
+				text: `Nuestro primer evento como pareja en tu iglesia, estaba un poco nervioso pero todo salió muy bonito.`
+			},
+			{
+				type: 'video',
+				src: '/videos/laguito_us_2.webm',
+				alt: 'Nosotros en el Laguito',
+				date: ``,
+				text: ``
+			},
+			{ type: 'photo', src: '/photos/nosotros2.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros3.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros4.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros5.webp', alt: 'Nosotros', date: ``, text: `` }
+		]
+	},
+	{
+		kind: 'nosotros',
+		items: [
+			{ type: 'photo', src: '/photos/nosotros6.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros7.webp', alt: 'Nosotros', date: ``, text: `` },
+			{
+				type: 'video',
+				src: '/videos/disfraces_ratatuille.webm',
+				alt: 'Nuestros disfraces de Ratatouille',
+				date: ``,
+				text: ``
+			},
+			{ type: 'photo', src: '/photos/nosotros8.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros9.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros10.webp', alt: 'Nosotros', date: ``, text: `` }
+		]
+	},
+	{
+		kind: 'nosotros',
+		items: [
+			{ type: 'photo', src: '/photos/nosotros11.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'video', src: '/videos/cafecito.webm', alt: 'Cafecito', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros12.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros13.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros14.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros15.webp', alt: 'Nosotros', date: ``, text: `` }
+		]
+	},
+	{
+		kind: 'nosotros',
+		items: [
+			{ type: 'photo', src: '/photos/nosotros16.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros17.webp', alt: 'Nosotros', date: ``, text: `` },
+			{
+				type: 'video',
+				src: '/videos/starfire_robin_costumes.webm',
+				alt: 'Starfire y Robin',
+				date: ``,
+				text: ``
+			},
+			{ type: 'photo', src: '/photos/nosotros18.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros19.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotro20.webp', alt: 'Nosotros', date: ``, text: `` }
+		]
+	},
+	{
+		kind: 'nosotros',
+		items: [
+			{ type: 'photo', src: '/photos/nosotros21.webp', alt: 'Nosotros', date: ``, text: `` },
+			{
+				type: 'video',
+				src: '/videos/pumpinking_video.webm',
+				alt: 'Pumpkin King',
+				date: ``,
+				text: ``
+			},
+			{ type: 'photo', src: '/photos/nosotros22.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros23.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros24.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros25.webp', alt: 'Nosotros', date: ``, text: `` }
+		]
+	},
+	{
+		kind: 'nosotros',
+		items: [
+			{ type: 'photo', src: '/photos/nosotros26.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros27.webp', alt: 'Nosotros', date: ``, text: `` },
+			{
+				type: 'video',
+				src: '/videos/laguito_us_slomo.webm',
+				alt: 'Laguito en cámara lenta',
+				date: ``,
+				text: ``
+			},
+			{ type: 'photo', src: '/photos/nosotros28.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros29.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'video', src: '/videos/filtro.webm', alt: 'Con filtro', date: ``, text: `` }
+		]
+	},
+	{
+		kind: 'nosotros',
+		items: [
+			{ type: 'photo', src: '/photos/nosotros30.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros31.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros32.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros33.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros34.webp', alt: 'Nosotros', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/nosotros35.webp', alt: 'Nosotros', date: ``, text: `` }
+		]
+	},
+	{
+		kind: 'ella',
+		items: [
+			{ type: 'photo', src: '/photos/ella.webp', alt: 'Rosario', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/ella1.webp', alt: 'Rosario', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/ella2.webp', alt: 'Rosario', date: ``, text: `` },
+			{ type: 'photo', src: '/photos/ella3.webp', alt: 'Rosario', date: ``, text: `` }
+		]
+	}
 ];
-
-// 6 páginas de 6: 5 fotos + 1 video (la última, 4 fotos + 2 videos).
-const nosotros: GalleryPage[] = Array.from({ length: 6 }, (_, p) => {
-	const shots = us.slice(p * 5, p === 5 ? undefined : p * 5 + 5);
-	const clips = p === 5 ? videos.slice(5) : [videos[p]];
-	const items = [...shots];
-	clips.forEach((c, k) => items.splice(1 + k * 3 + (p % 2), 0, c));
-	return { kind: 'nosotros', items };
-});
-
-const ella: GalleryPage = {
-	kind: 'ella',
-	items: ['ella', 'ella1', 'ella2', 'ella3'].map((n) => photo(n, 'Rosario'))
-};
-
-export const galleryPages: GalleryPage[] = [...nosotros, ella];

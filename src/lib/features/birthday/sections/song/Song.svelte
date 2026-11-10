@@ -55,7 +55,7 @@
 			use:reveal={150}
 			class="flex flex-1 flex-col gap-3 rounded-[28px] bg-cream/80 p-5 text-left horiz:justify-center horiz:p-8"
 		>
-			<p class="font-hand text-[28px] leading-none font-bold text-plum">las que cantamos juntos</p>
+			<p class="font-hand text-[28px] leading-none font-bold text-plum">y las que cantamos juntos...</p>
 			<ul class="flex flex-col gap-2.5">
 				{#each together as t (t.title)}
 					<li

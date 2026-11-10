@@ -2,8 +2,10 @@
 	import { countUp } from '#lib/shared/actions/countUp.ts';
 	import { reveal } from '#lib/shared/actions/reveal.ts';
 	import Heart from '#lib/shared/ui/Heart.svelte';
+	import LazyMap from '#lib/shared/ui/LazyMap.svelte';
 	import Scene from '#lib/shared/ui/Scene.svelte';
-	import { DATES_START, messages, trips } from './numbers.data.ts';
+	import PhotoDrift from '../story/PhotoDrift.svelte';
+	import { DATES_START, messages, tripPhotos, trips } from './numbers.data.ts';
 
 	let { now }: { now: number } = $props();
 
@@ -11,6 +13,17 @@
 	let sundays = $derived(
 		now < DATES_START ? 0 : Math.floor((now - DATES_START) / (7 * 86400000)) + 1
 	);
+
+	// Centro y zoom para que quepan todos los viajes en el mapa.
+	const lngs = trips.map((t) => t.coords[0]);
+	const lats = trips.map((t) => t.coords[1]);
+	const tripCenter: [number, number] = [
+		(Math.min(...lngs) + Math.max(...lngs)) / 2,
+		(Math.min(...lats) + Math.max(...lats)) / 2
+	];
+	const span = Math.max(Math.max(...lngs) - Math.min(...lngs), 0.5);
+	// ~90 px por grado en un mapa de ~250-320 px: ambos lugares caben con margen para sus nombres.
+	const tripZoom = Math.log2(360 / span) - 1.5;
 
 	const bigNumber =
 		'text-[clamp(120px,40vw,250px)] leading-[0.85] font-bold text-rose-400 tabular-nums horiz:text-[clamp(120px,38svh,330px)]';
@@ -38,23 +51,37 @@
 </Scene>
 
 <!-- Viajes -->
-<Scene id="viajes" title="Tus viajes" ghost="2" class="bg-candy">
+<Scene id="viajes" title="Tus viajes" ghost={String(trips.length)} class="bg-candy">
+	{#snippet bg()}
+		<PhotoDrift photos={tripPhotos} />
+	{/snippet}
 	<p use:reveal class={kicker}>nuestros excursiones</p>
 	<div use:reveal={120} class={bigNumber}>
 		<span use:countUp={{ to: trips.length }}>{trips.length}</span>
 	</div>
 	<h2 use:reveal={240} class={label}>viajes juntos</h2>
 	<ul class="flex flex-wrap justify-center gap-3">
-		{#each trips as trip, i (trip)}
+		{#each trips as trip, i (trip.name)}
 			<li
 				use:reveal={320 + i * 120}
 				class="flex items-center gap-2 rounded-full bg-cream px-5 py-2 text-[18px] font-semibold text-berry shadow-[0_4px_0_var(--color-rose)]"
 			>
 				<Heart class="h-5 w-5.5" />
-				{trip}
+				{trip.name}
 			</li>
 		{/each}
 	</ul>
+	<div
+		use:reveal={460}
+		class="-z-10 horiz:absolute horiz:top-1/2 horiz:left-0 horiz:-translate-y-1/2 horiz:-rotate-3"
+	>
+		<LazyMap
+			center={tripCenter}
+			zoom={tripZoom}
+			places={trips.map((t) => ({ coords: t.coords, label: t.name }))}
+			class="h-44 w-[min(82vw,380px)] horiz:h-[clamp(190px,36svh,340px)] horiz:w-[clamp(200px,20vw,320px)]"
+		/>
+	</div>
 </Scene>
 
 <!-- Mensajes -->

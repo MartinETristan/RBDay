@@ -9,11 +9,19 @@ export const scroll = $state({ y: 0, progress: 0, horizontal: false });
  */
 export const nav = $state({ locked: false });
 
+let lockedAt = { x: 0, y: 0 };
+
 export function lockNavigation(locked: boolean) {
 	nav.locked = locked;
+	if (locked) lockedAt = { x: window.scrollX, y: window.scrollY };
 	document.documentElement.classList.toggle('nav-locked', locked);
+	if (locked) return;
+	// Por si el navegador movió el scroll mientras estaba bloqueado: vuelve a la misma escena.
+	if (window.scrollX !== lockedAt.x || window.scrollY !== lockedAt.y) {
+		window.scrollTo({ left: lockedAt.x, top: lockedAt.y, behavior: 'instant' });
+	}
 	// Lenis pudo medir la página mientras estaba bloqueada: vuelve a medir al desbloquear.
-	if (!locked) instance?.resize();
+	instance?.resize();
 }
 
 const DESKTOP = '(min-width: 1024px)';
