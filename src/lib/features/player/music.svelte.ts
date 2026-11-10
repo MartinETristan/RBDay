@@ -4,60 +4,67 @@ import { tracks } from './tracks.ts';
 export const music = $state({ started: false, muted: false, index: 0, failed: false });
 
 const VOLUME = 0.6;
-let audio: HTMLAudioElement | null = null;
-let errorsInARow = 0;
-let fade = 0;
+const CROSSFADE_MS = 1500;
+const STEP_MS = 100;
 
-function load(index: number) {
-	if (!audio) return;
-	music.index = index;
-	audio.src = tracks[index].src;
-	audio.play().catch(() => {});
+let current: HTMLAudioElement | null = null;
+const fades = new Map<HTMLAudioElement, number>();
+let wanted = 0;
+
+function ramp(a: HTMLAudioElement, to: number, then?: () => void) {
+	clearInterval(fades.get(a));
+	const step = (VOLUME * STEP_MS) / CROSSFADE_MS;
+	const id = window.setInterval(() => {
+		const v = a.volume;
+		const nv = v < to ? Math.min(to, v + step) : Math.max(to, v - step);
+		a.volume = nv;
+		if (nv === to) {
+			clearInterval(id);
+			fades.delete(a);
+			then?.();
+		}
+	}, STEP_MS);
+	fades.set(a, id);
 }
 
-function next() {
-	load((music.index + 1) % tracks.length);
-}
-
-function fadeIn() {
-	if (!audio) return;
-	clearInterval(fade);
-	audio.volume = 0;
-	fade = window.setInterval(() => {
-		if (!audio) return clearInterval(fade);
-		audio.volume = Math.min(VOLUME, audio.volume + 0.04);
-		if (audio.volume >= VOLUME) clearInterval(fade);
-	}, 120);
-}
-
-/** Inicia (o continúa) la música. Debe llamarse desde un clic del usuario. */
-export function startMusic() {
-	if (!audio) {
-		audio = new Audio();
-		audio.addEventListener('ended', () => {
-			errorsInARow = 0;
-			next();
-		});
-		audio.addEventListener('playing', () => (errorsInARow = 0));
-		// Archivo faltante: salta a la siguiente; si fallan todas, queda en silencio.
-		audio.addEventListener('error', () => {
-			errorsInARow++;
-			if (errorsInARow >= tracks.length) {
-				music.failed = true;
-				return;
-			}
-			next();
-		});
-		audio.muted = music.muted;
-		load(0);
-		fadeIn();
-	} else if (audio.paused && !music.failed) {
-		audio.play().catch(() => {});
+function crossfadeTo(index: number) {
+	if (current && music.index === index) {
+		if (current.paused && !music.failed) current.play().catch(() => {});
+		return;
 	}
-	music.started = true;
+	const old = current;
+	const a = new Audio(tracks[index].src);
+	a.loop = true;
+	a.volume = 0;
+	a.muted = music.muted;
+	a.addEventListener('error', () => {
+		if (current === a) music.failed = true;
+	});
+	a.play().catch(() => {});
+	current = a;
+	music.index = index;
+	music.failed = false;
+	ramp(a, VOLUME);
+	if (old) ramp(old, 0, () => old.pause());
+}
+
+/** Inicia la música. Debe llamarse desde un clic del usuario. */
+export function startMusic() {
+	if (!music.started) {
+		music.started = true;
+		crossfadeTo(wanted);
+	} else if (current?.paused && !music.failed) {
+		current.play().catch(() => {});
+	}
+}
+
+/** Cambia de canción (con crossfade) según la escena activa. */
+export function musicForTrack(i: number) {
+	wanted = i % tracks.length;
+	if (music.started) crossfadeTo(wanted);
 }
 
 export function toggleMute() {
 	music.muted = !music.muted;
-	if (audio) audio.muted = music.muted;
+	for (const a of [current, ...fades.keys()]) if (a) a.muted = music.muted;
 }

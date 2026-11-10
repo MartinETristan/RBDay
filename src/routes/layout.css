@@ -17,6 +17,17 @@
 	--color-plum: #a63a6e;
 	--color-berry: #7a2250;
 	--color-royal: #1b2fa8;
+
+	/* Tokens que usan los componentes de shadcn (mapa), en la paleta rosa. */
+	--color-background: #fff6fa;
+	--color-foreground: #7a2250;
+	--color-popover: #fff6fa;
+	--color-popover-foreground: #7a2250;
+	--color-muted: #ffe3ee;
+	--color-muted-foreground: #a63a6e;
+	--color-accent: #ffd3e4;
+	--color-accent-foreground: #7a2250;
+	--color-border: #f29bbf;
 }
 
 /* Lenis */

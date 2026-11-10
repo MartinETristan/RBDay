@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { nav, scroll, scrollToElement } from '#lib/shared/scroll/lenis.svelte.ts';
+	import { tracks } from './tracks.ts';
+	import { musicForTrack } from './music.svelte.ts';
 	import { SCENE_SECONDS, player } from './player.svelte.ts';
 
 	let scenes = $state<HTMLElement[]>([]);
@@ -24,6 +26,17 @@
 		);
 		scenes.forEach((s) => io.observe(s));
 		return () => io.disconnect();
+	});
+
+	// Cada canción dura 2 "diapositivas", contando desde el capítulo 1 (la portada sigue con la
+	// primera). Las escenas que comparten `data-unit` (p. ej. toda la galería) cuentan como una.
+	$effect(() => {
+		if (!scenes.length) return;
+		const keys = scenes.map((s) => s.dataset.unit ?? s.id);
+		const units = keys.filter((k, i) => k !== keys[i - 1]);
+		const first = Math.max(units.indexOf('capitulo-1'), 0);
+		const n = Math.max(0, units.indexOf(keys[active]) - first);
+		musicForTrack(Math.floor(n / 2) % tracks.length);
 	});
 
 	const go = (i: number) => !nav.locked && scenes[i] && scrollToElement(scenes[i]);

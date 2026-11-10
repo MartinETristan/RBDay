@@ -10,6 +10,7 @@
 		id,
 		title,
 		ghost,
+		unit,
 		narrow = false,
 		class: className = '',
 		bg,
@@ -18,6 +19,8 @@
 		id: string;
 		title: string;
 		ghost?: string;
+		/** Agrupa escenas para la música: las que comparten `unit` cuentan como una sola. */
+		unit?: string;
 		narrow?: boolean;
 		class?: string;
 		bg?: Snippet;
@@ -29,6 +32,7 @@
 	{id}
 	data-scene
 	data-title={title}
+	data-unit={unit}
 	class="scene-circles relative z-10 flex min-h-svh w-full shrink-0 flex-col items-center justify-center overflow-hidden px-6 py-24 text-center horiz:h-svh horiz:min-h-0 horiz:px-16 horiz:py-16 {narrow
 		? 'horiz:w-[70vw]'
 		: 'horiz:w-screen'} {className}"

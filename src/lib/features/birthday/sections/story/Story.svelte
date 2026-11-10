@@ -3,6 +3,8 @@
 	import { reveal } from '#lib/shared/actions/reveal.ts';
 	import Heart from '#lib/shared/ui/Heart.svelte';
 	import Scene from '#lib/shared/ui/Scene.svelte';
+	import { Map, MapMarker, MarkerContent } from '#lib/components/ui/map/index.ts';
+	import PhotoDrift from './PhotoDrift.svelte';
 	import { timeline } from './story.data.ts';
 
 	let { now }: { now: number } = $props();
@@ -45,6 +47,11 @@
 		ghost={String(i + 1).padStart(2, '0')}
 		class={tones[i % tones.length]}
 	>
+		{#snippet bg()}
+			{#if c.photos.length}
+				<PhotoDrift photos={c.photos} />
+			{/if}
+		{/snippet}
 		<p
 			use:reveal
 			class="font-hand text-[clamp(28px,6vw,40px)] font-bold text-plum horiz:text-[clamp(28px,4.6svh,42px)]"
@@ -94,5 +101,25 @@
 			<Heart class="h-5 w-5.5" />
 			hace <span use:countUp={{ to: c.daysAgo }} class="tabular-nums">{c.daysAgo}</span> días
 		</p>
+		{#if c.coords}
+			<div
+				use:reveal={460}
+				class="h-36 w-[min(78vw,340px)] rounded-xl bg-white p-1.5 shadow-[0_6px_0_var(--color-rose)] horiz:absolute horiz:top-1/2 horiz:left-0 horiz:h-[clamp(150px,28svh,260px)] horiz:w-[clamp(170px,17vw,260px)] horiz:-translate-y-1/2 horiz:-rotate-3"
+			>
+				<Map
+					theme="light"
+					center={c.coords}
+					zoom={14.5}
+					class="size-full overflow-hidden rounded-lg"
+					options={{ interactive: false, attributionControl: false }}
+				>
+					<MapMarker longitude={c.coords[0]} latitude={c.coords[1]}>
+						<MarkerContent>
+							<Heart color="#e58ab4" class="h-8 w-9 drop-shadow" />
+						</MarkerContent>
+					</MapMarker>
+				</Map>
+			</div>
+		{/if}
 	</Scene>
 {/each}
