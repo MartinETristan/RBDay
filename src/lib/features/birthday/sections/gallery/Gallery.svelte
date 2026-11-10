@@ -71,7 +71,7 @@
 								muted
 								loop
 								playsinline
-								preload="metadata"
+								preload="none"
 								use:playInView
 								class="aspect-4/5 w-full rounded-md object-cover"
 							></video>
@@ -80,6 +80,7 @@
 								src={p.src}
 								alt={p.alt}
 								loading="lazy"
+								decoding="async"
 								class="aspect-4/5 w-full rounded-md object-cover"
 							/>
 						{/if}
@@ -116,6 +117,7 @@
 				<img
 					src={selected.src}
 					alt={selected.alt}
+					decoding="async"
 					class="max-h-[68svh] w-full rounded-lg object-contain"
 				/>
 			{/if}

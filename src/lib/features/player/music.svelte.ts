@@ -18,6 +18,7 @@ function audioFor(index: number) {
 	let a = players[index];
 	if (!a) {
 		const created = new Audio(tracks[index].src);
+		created.preload = 'none'; // se descarga solo al reproducirla
 		created.loop = true;
 		created.volume = 0;
 		created.addEventListener('error', () => {

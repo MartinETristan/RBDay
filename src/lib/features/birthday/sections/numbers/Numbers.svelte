@@ -55,7 +55,7 @@
 	{#snippet bg()}
 		<PhotoDrift photos={tripPhotos} />
 	{/snippet}
-	<p use:reveal class={kicker}>nuestros excursiones</p>
+	<p use:reveal class={kicker}>nuestras excursiones</p>
 	<div use:reveal={120} class={bigNumber}>
 		<span use:countUp={{ to: trips.length }}>{trips.length}</span>
 	</div>

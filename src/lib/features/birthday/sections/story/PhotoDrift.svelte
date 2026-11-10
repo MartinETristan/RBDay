@@ -51,6 +51,8 @@
 			<img
 				{src}
 				alt=""
+				loading="lazy"
+				decoding="async"
 				class="absolute inset-0 size-full object-cover"
 				class:on={i === active}
 				style:--dir={i % 2 ? -1 : 1}
