@@ -1,0 +1,8 @@
+Pon aquí los archivos de audio (mp3) con los nombres de src/lib/features/player/tracks.ts:
+
+  ophelia.mp3
+  dont-go-breaking-my-heart.mp3
+  oiga.mp3
+  hoy-tengo-ganas-de-ti.mp3
+
+La música empieza al pulsar "Iniciar" y pasa a la siguiente canción al terminar.

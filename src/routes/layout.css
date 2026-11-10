@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
+@custom-variant horiz (html.horiz &);
+
 @theme {
 	--font-display: 'Fredoka', system-ui, sans-serif;
 	--font-hand: 'Caveat', cursive;
@@ -42,6 +44,11 @@ body {
 		radial-gradient(circle at 90% 90%, #f29bbf 0, transparent 55%), #ffc9de;
 }
 
+/* Fondo rosa pastel de la portada de cumpleaños */
+.pastel-bg {
+	background: radial-gradient(circle at 15% 12%, #fff6fa 0, transparent 40%), #ffe1ec;
+}
+
 /* Fondo suave para el contador */
 .calm-bg {
 	background:
@@ -49,7 +56,137 @@ body {
 		radial-gradient(circle at 85% 85%, #ffd3e4 0, transparent 55%), #ffe3ee;
 }
 
+/* Modo horizontal (escritorio): sin scroll vertical */
+html.horiz {
+	overflow-x: auto;
+	overflow-y: hidden;
+}
+html.horiz body {
+	height: 100svh;
+}
+
+/* Navegación bloqueada (antes de pulsar "Iniciar"): no se puede desplazar la página */
+html.nav-locked,
+html.nav-locked body {
+	overflow: hidden !important;
+	touch-action: none;
+}
+
+/* Táctil: las escenas se pegan con CSS (siempre una completa en pantalla) */
+html.snap-native {
+	scroll-snap-type: y mandatory;
+}
+html.snap-native.horiz {
+	scroll-snap-type: x mandatory;
+}
+html.snap-native.snap-off {
+	scroll-snap-type: none;
+}
+html.snap-native [data-scene] {
+	scroll-snap-align: start;
+	scroll-snap-stop: always;
+}
+
+/* Glitter con parallax: --x0/--y0 = posición base (vw/svh), --d = profundidad, --s = scroll en px.
+   mod() hace que al salir por un lado reaparezca por el otro. */
+.glitter {
+	position: absolute;
+	top: 0;
+	left: 0;
+	will-change: transform;
+	transform: translate3d(calc(var(--x0) * 1vw), calc(var(--y0) * 1svh), 0);
+}
+.par-h .glitter {
+	transform: translate3d(
+		mod(calc(var(--x0) * 1vw - var(--s, 0) * var(--d) * 1px), 100vw),
+		calc(var(--y0) * 1svh),
+		0
+	);
+}
+.par-v .glitter {
+	transform: translate3d(
+		calc(var(--x0) * 1vw),
+		mod(calc(var(--y0) * 1svh - var(--s, 0) * var(--d) * 1px), 100svh),
+		0
+	);
+}
+
+/* Círculos decorativos de cada escena */
+.scene-circles::before,
+.scene-circles::after {
+	content: '';
+	position: absolute;
+	border-radius: 50%;
+	pointer-events: none;
+}
+.scene-circles::before {
+	width: 60vmin;
+	height: 60vmin;
+	top: -20vmin;
+	left: -15vmin;
+	background: rgb(255 255 255 / 0.35);
+}
+.scene-circles::after {
+	width: 70vmin;
+	height: 70vmin;
+	right: -20vmin;
+	bottom: -30vmin;
+	background: rgb(242 155 191 / 0.28);
+}
+
 /* ---------- animaciones ---------- */
+@keyframes fill {
+	from {
+		width: 0;
+	}
+	to {
+		width: 100%;
+	}
+}
+@keyframes marquee {
+	to {
+		transform: translateX(-50%);
+	}
+}
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+@keyframes eq {
+	0%,
+	100% {
+		transform: scaleY(0.25);
+	}
+	50% {
+		transform: scaleY(1);
+	}
+}
+@keyframes nudge {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	50% {
+		transform: translateX(8px);
+	}
+}
+.seg-fill {
+	animation: fill var(--dur, 15s) linear forwards;
+}
+.marquee {
+	animation: marquee 22s linear infinite;
+}
+.spin-slow {
+	animation: spin 9s linear infinite;
+}
+.eq-bar {
+	transform-origin: bottom;
+	animation: eq 1.1s ease-in-out infinite;
+}
+.nudge {
+	animation: nudge 1.4s ease-in-out infinite;
+}
 @keyframes twinkle {
 	0%,
 	100% {
@@ -182,13 +319,25 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.par-h .glitter,
+	.par-v .glitter {
+		transform: translate3d(calc(var(--x0) * 1vw), calc(var(--y0) * 1svh), 0);
+	}
 	.spark,
 	.glitter-dot,
 	.rising-heart,
 	.beat,
 	.pop,
-	.shine {
+	.shine,
+	.marquee,
+	.spin-slow,
+	.eq-bar,
+	.nudge {
 		animation: none;
+	}
+	.seg-fill {
+		animation: none;
+		width: 100%;
 	}
 	.spark,
 	.glitter-dot {
