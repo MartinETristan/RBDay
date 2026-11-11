@@ -82,6 +82,23 @@ function crossfadeTo(index: number) {
 	if (old) ramp(old, 0, () => old.pause());
 }
 
+/** Reproductores que ya recibieron un gesto del usuario. */
+const unlocked = new WeakSet<HTMLAudioElement>();
+
+/**
+ * Safari/iOS solo deja sonar un <audio> que recibió play()/load() dentro de un gesto, y el permiso
+ * es por elemento. Los cambios de escena llegan sin gesto (scroll, temporizador), así que aquí,
+ * dentro del gesto de inicio, se desbloquean todos. Con preload="none", load() no descarga audio.
+ */
+function unlockAll() {
+	for (let i = 0; i < tracks.length; i++) {
+		const a = audioFor(i);
+		if (unlocked.has(a)) continue;
+		unlocked.add(a);
+		if (a !== current && a.paused) a.load();
+	}
+}
+
 /** Inicia la música. Debe llamarse desde un clic del usuario. */
 export function startMusic() {
 	if (!music.started) {
@@ -90,6 +107,26 @@ export function startMusic() {
 	} else if (current?.paused && !music.failed) {
 		current.play().catch(() => {});
 	}
+	unlockAll();
+}
+
+/**
+ * Eventos que el navegador acepta como gesto para reproducir audio.
+ * `touchstart` y `pointerdown` táctil NO lo son: play() falla en silencio.
+ */
+const GESTURES = ['click', 'touchend', 'keydown'] as const;
+
+/** Llama a `start` en cada gesto hasta que la música suene de verdad. Devuelve la limpieza. */
+export function startOnGesture(start: () => void, target: EventTarget = window) {
+	const stop = () => {
+		for (const ev of GESTURES) target.removeEventListener(ev, go);
+	};
+	const go = () => {
+		start();
+		if (current && !current.paused) stop();
+	};
+	for (const ev of GESTURES) target.addEventListener(ev, go, { passive: true });
+	return stop;
 }
 
 /** Cambia de canción (con crossfade) según la escena activa. */

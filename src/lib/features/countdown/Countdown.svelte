@@ -10,24 +10,16 @@
 
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { music } from '#lib/features/player/music.svelte.ts';
+	import { music, startOnGesture } from '#lib/features/player/music.svelte.ts';
 
 	/** Milisegundos que faltan. */
 	let { remaining }: { remaining: number } = $props();
 
 	// El navegador bloquea el audio hasta que la persona interactúa:
-	// arranca con el primer toque, clic o tecla.
+	// arranca con el primer toque, clic o tecla que el navegador acepte.
 	onMount(() => {
 		if (music.started) return;
-		const events = ['pointerdown', 'keydown', 'touchstart'] as const;
-		const go = () => {
-			for (const ev of events) removeEventListener(ev, go);
-			startCountdownMusic();
-		};
-		for (const ev of events) addEventListener(ev, go, { passive: true });
-		return () => {
-			for (const ev of events) removeEventListener(ev, go);
-		};
+		return startOnGesture(startCountdownMusic);
 	});
 
 	const pad = (n: number) => String(n).padStart(2, '0');
