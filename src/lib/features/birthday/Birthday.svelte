@@ -32,8 +32,8 @@
 	<Welcome />
 	<Story {now} />
 	<Numbers {now} />
-	<Gallery />
 	<Song />
+	<Gallery />
 	<Letter />
 	<Footer />
 </main>

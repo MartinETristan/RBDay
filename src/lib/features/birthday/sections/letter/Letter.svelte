@@ -49,7 +49,7 @@
 				onclick={open}
 				disabled={stage === 'opening'}
 				aria-label="Abrir la carta"
-				class="envelope group relative block aspect-[3/2] w-[min(68vw,300px,39svh)] cursor-pointer {stage ===
+				class="envelope group relative block aspect-3/2 w-[min(68vw,300px,39svh)] cursor-pointer {stage ===
 				'opening'
 					? 'is-open'
 					: ''}"
