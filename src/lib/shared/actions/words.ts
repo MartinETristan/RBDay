@@ -1,4 +1,5 @@
 import type { Action } from 'svelte/action';
+import { observeInView } from './inView.ts';
 
 /**
  * Entrada de texto palabra por palabra: cada palabra aparece (fade + subida) con un pequeño
@@ -17,13 +18,7 @@ export const words: Action<HTMLElement, number | undefined> = (node, delay = 0) 
 	node.classList.add('words');
 	node.style.setProperty('--delay', `${delay}ms`);
 
-	const io = new IntersectionObserver(
-		(entries) => {
-			for (const entry of entries) node.classList.toggle('in', entry.isIntersecting);
-		},
-		{ threshold: 0.15 }
-	);
-	io.observe(node);
+	const stop = observeInView(node, (v) => node.classList.toggle('in', v));
 
-	return { destroy: () => io.disconnect() };
+	return { destroy: stop };
 };
