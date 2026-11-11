@@ -11,6 +11,7 @@
 		{kicker}
 	</p>
 	<h2
+		data-intro-target
 		class="text-[clamp(34px,9vw,60px)] leading-[1.05] font-bold text-berry horiz:text-[clamp(34px,7.4svh,68px)]"
 	>
 		{title}

@@ -39,11 +39,12 @@
 		unit="galeria"
 		music="galeria"
 		title="Tus momentos"
+		intro={page === 0}
 		ghost="♥"
 		class={tones[page % tones.length]}
 	>
 		{#if kind === 'ella'}
-			<SceneHeading kicker="y la mejor parte..." title="Tú" />
+			<SceneHeading kicker="y lo mejor en cada momento..." title="Tú" />
 		{:else}
 			<SceneHeading
 				kicker="nuestros momentos del año · {page + 1}/{galleryPages.length - 1}"
@@ -101,7 +102,7 @@
 		onclose={() => (selected = null)}
 		onclick={(e) => e.currentTarget.close()}
 		aria-label={selected.alt}
-		class="m-auto cursor-pointer max-h-[92svh] w-[min(92vw,560px)] overflow-visible rounded-2xl bg-transparent p-0 backdrop:bg-berry/70 backdrop:backdrop-blur-sm"
+		class="m-auto max-h-[92svh] w-[min(92vw,560px)] cursor-pointer overflow-visible rounded-2xl bg-transparent p-0 backdrop:bg-berry/70 backdrop:backdrop-blur-sm"
 	>
 		<div class="lightbox rounded-2xl bg-white px-3 pt-3 pb-5 shadow-[0_8px_0_var(--color-rose)]">
 			{#if selected.type === 'video'}

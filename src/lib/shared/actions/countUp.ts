@@ -1,10 +1,12 @@
 import type { Action } from 'svelte/action';
+import { afterIntro } from './afterIntro.ts';
 
 /** Cuenta de 0 al número cada vez que entra en pantalla (como las cifras de un Wrapped). */
 export const countUp: Action<HTMLElement, { to: number; duration?: number }> = (node, params) => {
 	let to = params.to;
 	let visible = false;
 	let frame = 0;
+	let cancelWait = () => {};
 
 	const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 	const show = (v: number) => (node.textContent = String(Math.round(v)));
@@ -27,7 +29,8 @@ export const countUp: Action<HTMLElement, { to: number; duration?: number }> = (
 		(entries) => {
 			visible = entries.some((e) => e.isIntersecting);
 			if (reduced) return;
-			if (visible) run();
+			cancelWait();
+			if (visible) cancelWait = afterIntro(node, run);
 			else {
 				cancelAnimationFrame(frame);
 				show(0);
@@ -44,6 +47,7 @@ export const countUp: Action<HTMLElement, { to: number; duration?: number }> = (
 		},
 		destroy() {
 			io.disconnect();
+			cancelWait();
 			cancelAnimationFrame(frame);
 		}
 	};

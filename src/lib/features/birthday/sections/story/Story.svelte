@@ -44,6 +44,7 @@
 	<Scene
 		id="capitulo-{i + 1}"
 		title={c.title}
+		intro
 		ghost={String(i + 1).padStart(2, '0')}
 		class={tones[i % tones.length]}
 	>
@@ -54,6 +55,7 @@
 		{/snippet}
 		<p
 			use:reveal
+			data-intro-target
 			class="font-hand text-[clamp(28px,6vw,40px)] font-bold text-plum horiz:text-[clamp(28px,4.6svh,42px)]"
 		>
 			Capítulo {i + 1}

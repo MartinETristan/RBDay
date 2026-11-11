@@ -24,7 +24,7 @@
 	}));
 </script>
 
-<Scene id="cancion" title="Tu canción del año" music="ophelia" ghost="♪" class="bg-pink">
+<Scene id="cancion" title="Tu canción del año" music="ophelia" ghost="♪" intro class="bg-pink">
 	<SceneHeading kicker="por que la musica es vida..." title="Nuestra canción" />
 
 	<div class="flex w-full max-w-5xl flex-col gap-4 horiz:flex-row horiz:items-stretch horiz:gap-6">

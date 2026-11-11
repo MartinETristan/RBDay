@@ -10,9 +10,14 @@
 		'inline-flex min-h-12 cursor-pointer items-center justify-center rounded-full border-2 border-candy bg-transparent px-6 text-lg font-semibold text-candy transition hover:bg-candy hover:text-berry';
 </script>
 
-<Scene id="fin" title="Fin" music="fin" class="bg-berry! text-candy">
-	<p class="text-[clamp(32px,8vw,56px)] leading-tight font-bold horiz:text-[clamp(32px,7svh,64px)]">
+<Scene id="fin" title="Fin" music="fin" intro class="bg-berry! text-candy">
+	<p
+		data-intro-target
+		class="text-[clamp(32px,8vw,56px)] leading-tight font-bold horiz:text-[clamp(32px,7svh,64px)]">
 		¡Feliz cumpleaños 25, Amorchito!
+	</p>
+	<p class="max-w-prose text-[clamp(16px,4.2vw,22px)] leading-relaxed horiz:text-[clamp(16px,3svh,24px)]">
+		Espero que te haya gustado este pequeño detalle jeje ✨. 
 	</p>
 	<p class="max-w-prose text-[clamp(16px,4.2vw,22px)] leading-relaxed horiz:text-[clamp(16px,3svh,24px)]">
 		Si te gustaría volver a verlo, usa el botoncito de abajo para regresar al inicio 🙂‍↕️. 

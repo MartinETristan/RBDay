@@ -24,6 +24,43 @@ export function lockNavigation(locked: boolean) {
 	instance?.resize();
 }
 
+/**
+ * Tope de navegación: con un `id` de escena no se puede pasar más allá de esa escena
+ * (rueda, teclado, tacto, barra de progreso). Se usa en la carta hasta que se pulsa "Continuar".
+ */
+let gateId: string | null = null;
+
+export function setGate(id: string | null) {
+	gateId = id;
+	if (id) clampToGate();
+}
+
+/** Índice de la escena tope, o `Infinity` si no hay tope. */
+function gateIndex(): number {
+	if (!gateId) return Infinity;
+	const i = sceneList().findIndex((s) => s.id === gateId);
+	return i < 0 ? Infinity : i;
+}
+
+/** Si el scroll pasó del final de la escena tope, lo regresa a ese final. */
+function clampToGate() {
+	if (!gateId) return;
+	const el = document.getElementById(gateId);
+	if (!el) return;
+	const horizontal = document.documentElement.classList.contains('horiz');
+	const r = el.getBoundingClientRect();
+	if (horizontal) {
+		const max = window.scrollX + r.right - window.innerWidth;
+		if (window.scrollX > max + 1) {
+			if (instance) instance.scrollTo(max, { immediate: true, force: true });
+			else window.scrollTo({ left: max, behavior: 'instant' });
+		}
+	} else {
+		const max = window.scrollY + r.bottom - window.innerHeight;
+		if (window.scrollY > max + 1) window.scrollTo({ top: max, behavior: 'instant' });
+	}
+}
+
 const DESKTOP = '(min-width: 1024px)';
 const MOUSE = '(hover: hover) and (pointer: fine)';
 const REDUCED = '(prefers-reduced-motion: reduce)';
@@ -128,6 +165,7 @@ export function scrollToTop() {
 
 /** Lleva una escena al inicio de la pantalla (horizontal en escritorio, vertical en celular). */
 export function scrollToElement(el: HTMLElement) {
+	if (sceneList().indexOf(el) > gateIndex()) return;
 	if (instance) instance.scrollTo(el, { duration: TRANSITION, lock: true });
 	else nativeScrollTo(el);
 }
@@ -171,6 +209,7 @@ export function startLenis(): () => void {
 		if (!horizontal || !mouse.matches) {
 			document.documentElement.classList.add('snap-native');
 			const onScroll = () => {
+				clampToGate();
 				scroll.y = horizontal ? window.scrollX : window.scrollY;
 				trackScene();
 			};
@@ -193,6 +232,7 @@ export function startLenis(): () => void {
 		instance = lenis;
 
 		lenis.on('scroll', (e: Lenis) => {
+			clampToGate();
 			scroll.y = e.scroll;
 			scroll.progress = e.progress;
 			trackScene();
@@ -221,7 +261,7 @@ export function startLenis(): () => void {
 			const list = scenes();
 			if (!list.length) return;
 			const current = Math.round(window.scrollX / window.innerWidth);
-			const target = Math.max(0, Math.min(list.length - 1, current + dir));
+			const target = Math.max(0, Math.min(list.length - 1, gateIndex(), current + dir));
 			if (target === current) return;
 			busyUntil = performance.now() + TRANSITION * 1000;
 			inertia = true;

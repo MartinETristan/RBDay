@@ -340,6 +340,34 @@ html.snap-native [data-scene] {
 	transform: none;
 }
 
+/* Entrada de escena (Scene.svelte → `intro`). `data-intro` lo pone JS: hold → release → done. */
+/* El título (y su contenedor `reveal`) se queda quieto en su sitio para medirlo y animarlo (FLIP). */
+[data-intro]:not([data-intro='done'])
+	:is(.reveal[data-intro-target], .reveal:has([data-intro-target])) {
+	opacity: 1;
+	transform: none;
+	transition: none;
+}
+/* Mientras el título está al centro, el resto espera oculto. Los `reveal` luego entran con su
+   propia animación escalonada; lo demás (bloques sin `reveal`, hermanos del título) con un fade. */
+[data-intro='hold'] .reveal:not([data-intro-target]):not(:has([data-intro-target])) {
+	opacity: 0;
+	transform: translateY(36px);
+	transition: none;
+}
+[data-intro='hold']
+	:is([data-scene-content] > :not(.reveal), .reveal:has(> [data-intro-target]) > *):not(
+		[data-intro-target]
+	):not(:has([data-intro-target])) {
+	opacity: 0;
+}
+[data-intro='release']
+	:is([data-scene-content] > :not(.reveal), .reveal:has(> [data-intro-target]) > *):not(
+		[data-intro-target]
+	):not(:has([data-intro-target])) {
+	transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.par-h .glitter,
 	.par-v .glitter {

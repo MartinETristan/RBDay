@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { countUp } from '#lib/shared/actions/countUp.ts';
 	import { reveal } from '#lib/shared/actions/reveal.ts';
+	import { afterIntro } from '#lib/shared/actions/afterIntro.ts';
 	import Heart from '#lib/shared/ui/Heart.svelte';
 	import LazyMap from '#lib/shared/ui/LazyMap.svelte';
 	import Scene from '#lib/shared/ui/Scene.svelte';
@@ -14,11 +15,15 @@
 	const MARK_AFTER = 1700;
 	function markDays(node: HTMLElement) {
 		let timer: ReturnType<typeof setTimeout>;
+		let cancelWait = () => {};
 		const io = new IntersectionObserver(
 			([entry]) => {
 				clearTimeout(timer);
+				cancelWait();
 				if (entry.isIntersecting) {
-					timer = setTimeout(() => node.classList.add('marked'), MARK_AFTER);
+					cancelWait = afterIntro(node, () => {
+						timer = setTimeout(() => node.classList.add('marked'), MARK_AFTER);
+					});
 				} else {
 					node.classList.remove('marked');
 				}
@@ -29,6 +34,7 @@
 		return {
 			destroy() {
 				clearTimeout(timer);
+				cancelWait();
 				io.disconnect();
 			}
 		};
@@ -61,7 +67,7 @@
 </script>
 
 <!-- Citas -->
-<Scene id="citas" title="Tus domingos" ghost="♥" class="bg-petal">
+<Scene id="citas" title="Tus domingos" ghost="♥" intro class="bg-petal">
 	{#snippet bg()}
 		<Heart
 			class="pointer-events-none absolute right-[-8vmin] bottom-[-6vmin] z-0 h-[60vmin] w-[66vmin] opacity-10"
@@ -71,12 +77,12 @@
 	<div use:reveal={120} class={bigNumber}>
 		<span use:countUp={{ to: sundays }}>{sundays}</span>
 	</div>
-	<h2 use:reveal={240} class={label}>domingos de cita</h2>
+	<h2 use:reveal={240} data-intro-target class={label}>domingos de cita</h2>
 	<p use:reveal={320} class={detail}>Casi desde que empezamos, cada domingo es nuestro.</p>
 </Scene>
 
 <!-- Viajes -->
-<Scene id="viajes" title="Tus viajes" ghost={String(trips.length)} class="bg-candy">
+<Scene id="viajes" title="Tus viajes" ghost={String(trips.length)} intro class="bg-candy">
 	{#snippet bg()}
 		<PhotoDrift photos={tripPhotos} />
 	{/snippet}
@@ -84,7 +90,8 @@
 	<div use:reveal={120} class={bigNumber}>
 		<span use:countUp={{ to: trips.length }}>{trips.length}</span>
 	</div>
-	<h2 use:reveal={240} class={label}>viajes juntos</h2>
+	<h2 use:reveal={240} data-intro-target class={label}>viajes juntos</h2>
+	<p use:reveal={320} class={detail}>hasta ahora...</p>
 	<ul class="flex flex-wrap justify-center gap-3">
 		{#each trips as trip, i (trip.name)}
 			<li
@@ -110,7 +117,7 @@
 </Scene>
 
 <!-- Mensajes -->
-<Scene id="mensajes" title="Tus mensajes" ghost="@" class="bg-blush">
+<Scene id="mensajes" title="Tus mensajes" ghost="@" intro class="bg-blush">
 	<p use:reveal class={kicker}>nuestras conversaciones son...</p>
 	<h2
 		use:reveal={120}
@@ -118,7 +125,7 @@
 	>
 		{messages.big}
 	</h2>
-	<p use:reveal={240} class={label}>{messages.detail}</p>
+	<p use:reveal={240} data-intro-target class={label}>{messages.detail}</p>
 	<!-- Una burbuja por día de la semana -->
 	<div use:markDays class="week flex gap-2" aria-hidden="true">
 		{#each ['L', 'M', 'M', 'J', 'V', 'S', 'D'] as d, i (i)}

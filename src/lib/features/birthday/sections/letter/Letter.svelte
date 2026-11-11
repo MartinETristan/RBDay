@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onDestroy } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { reveal } from '#lib/shared/actions/reveal.ts';
-	import { nav, scrollToElement } from '#lib/shared/scroll/lenis.svelte.ts';
+	import { nav, scrollToElement, setGate } from '#lib/shared/scroll/lenis.svelte.ts';
 	import Scene from '#lib/shared/ui/Scene.svelte';
 	import { letter } from './letter.data.ts';
 
@@ -17,8 +17,13 @@
 		const scenes = [...document.querySelectorAll<HTMLElement>('[data-scene]')];
 		const i = scenes.findIndex((s) => s.id === 'carta');
 		const target = scenes[i + 1];
-		if (target && !nav.locked) scrollToElement(target);
+		if (!target || nav.locked) return;
+		setGate(null); // ya se puede seguir: se quita el tope
+		scrollToElement(target);
 	}
+
+	// No se puede pasar de la carta hasta pulsar "Continuar".
+	onMount(() => setGate('carta'));
 
 	function open() {
 		if (stage !== 'closed') return;
@@ -32,6 +37,7 @@
 	onDestroy(() => {
 		clearTimeout(timer);
 		clearTimeout(btnTimer);
+		setGate(null);
 	});
 </script>
 
@@ -43,7 +49,7 @@
 				onclick={open}
 				disabled={stage === 'opening'}
 				aria-label="Abrir la carta"
-				class="envelope group relative block h-[clamp(170px,32svh,260px)] w-[min(86vw,380px)] cursor-pointer {stage ===
+				class="envelope group relative block aspect-[3/2] w-[min(68vw,300px,39svh)] cursor-pointer {stage ===
 				'opening'
 					? 'is-open'
 					: ''}"
@@ -107,6 +113,9 @@
 		>
 			Continuar
 		</button>
+		<!-- Celular: margen bajo la carta para que su final pueda subir hasta la mitad de la pantalla
+		     (50svh menos el py-24 de la escena y el gap-6 del contenido). -->
+		<div aria-hidden="true" class="h-[max(0px,calc(50svh-120px))] shrink-0 horiz:hidden"></div>
 	{/if}
 </Scene>
 
