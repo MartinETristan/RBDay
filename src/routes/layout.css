@@ -340,6 +340,21 @@ html.snap-native [data-scene] {
 	transform: none;
 }
 
+/* Texto palabra por palabra (actions/words.ts) */
+.words .word {
+	display: inline-block;
+	opacity: 0;
+	transform: translateY(0.6em);
+	transition:
+		opacity 0.6s ease-out,
+		transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+	transition-delay: calc(var(--delay, 0ms) + var(--i) * 70ms);
+}
+.words.in .word {
+	opacity: 1;
+	transform: none;
+}
+
 /* Entrada de escena (Scene.svelte → `intro`). `data-intro` lo pone JS: hold → release → done. */
 /* El título (y su contenedor `reveal`) se queda quieto en su sitio para medirlo y animarlo (FLIP). */
 [data-intro]:not([data-intro='done'])
@@ -396,7 +411,8 @@ html.snap-native [data-scene] {
 	.confetti-piece {
 		display: none;
 	}
-	.reveal {
+	.reveal,
+	.words .word {
 		opacity: 1;
 		transform: none;
 		transition: none;
