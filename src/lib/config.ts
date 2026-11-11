@@ -19,4 +19,4 @@ export const REMEMBER_CODE = false;
  * Mostrar el contador antes del cumpleaños.
  * En false la página abre directo en la portada de cumpleaños (útil mientras se diseña).
  */
-export const COUNTDOWN_ENABLED = false;
+export const COUNTDOWN_ENABLED = true;
