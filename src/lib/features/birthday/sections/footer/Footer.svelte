@@ -3,7 +3,7 @@
 	import { scrollToTop } from '#lib/shared/scroll/lenis.svelte.ts';
 	import Scene from '#lib/shared/ui/Scene.svelte';
 
-	const VIDEO_SRC = asset('videos/impacto.mp4');
+	const VIDEO_SRC = asset('videos/historia.mov');
 	const VIDEO_FILENAME = 'feliz-cumpleanos-25.mp4';
 
 	const buttonClass =

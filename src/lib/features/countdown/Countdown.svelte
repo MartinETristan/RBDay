@@ -1,6 +1,34 @@
+<script lang="ts" module>
+	import { musicForKey, startMusic } from '#lib/features/player/music.svelte.ts';
+
+	/** Canción de fondo del contador (bg-fondo.mp3). Llamar desde un gesto (clic/tecla). */
+	export function startCountdownMusic() {
+		musicForKey('bienvenida');
+		startMusic();
+	}
+</script>
+
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { music } from '#lib/features/player/music.svelte.ts';
+
 	/** Milisegundos que faltan. */
 	let { remaining }: { remaining: number } = $props();
+
+	// El navegador bloquea el audio hasta que la persona interactúa:
+	// arranca con el primer toque, clic o tecla.
+	onMount(() => {
+		if (music.started) return;
+		const events = ['pointerdown', 'keydown', 'touchstart'] as const;
+		const go = () => {
+			for (const ev of events) removeEventListener(ev, go);
+			startCountdownMusic();
+		};
+		for (const ev of events) addEventListener(ev, go, { passive: true });
+		return () => {
+			for (const ev of events) removeEventListener(ev, go);
+		};
+	});
 
 	const pad = (n: number) => String(n).padStart(2, '0');
 
