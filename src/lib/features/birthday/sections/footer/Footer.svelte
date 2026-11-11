@@ -5,7 +5,10 @@
 
 <Scene id="fin" title="Fin" music="fin" class="bg-berry! text-candy">
 	<p class="text-[clamp(32px,8vw,56px)] leading-tight font-bold horiz:text-[clamp(32px,7svh,64px)]">
-		Feliz cumpleaños 25, Rosario
+		¡Feliz cumpleaños 25, Amorchito!
+	</p>
+	<p class="text-[clamp(32px,8vw,56px)] leading-tight horiz:text-[clamp(32px,7svh,64px)]">
+		Si te gustaria vovler a ver todo, usa el botoncito de abajo
 	</p>
 	<button
 		type="button"

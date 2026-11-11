@@ -44,6 +44,8 @@
 
 	const secondsOf = (i: number) => Number(scenes[i]?.dataset.seconds) || SCENE_SECONDS;
 
+	const isManual = (i: number) => scenes[i]?.dataset.manual !== undefined;
+
 	const go = (i: number) => !nav.locked && scenes[i] && scrollToElement(scenes[i]);
 
 	// Modo historia: cada escena dura sus segundos y luego pasa a la siguiente.
@@ -79,6 +81,7 @@
 			const idle = setTimeout(() => (manual = false), MANUAL_IDLE_SECONDS * 1000);
 			return () => clearTimeout(idle);
 		}
+		if (isManual(current)) return; // escena manual: no avanza sola
 		const timer = setTimeout(() => {
 			autoTarget = current + 1;
 			go(current + 1);
@@ -107,7 +110,7 @@
 			class="group flex h-4 flex-1 items-center {nav.locked ? 'cursor-default' : 'cursor-pointer'}"
 		>
 			<span class="relative block h-1.5 w-full overflow-hidden rounded-full bg-rose/30">
-				{#if i < active || (i === active && (!player.playing || manual))}
+				{#if i < active || (i === active && (!player.playing || manual || isManual(i)))}
 					<span class="absolute inset-0 bg-rose-400"></span>
 				{:else if i === active}
 					{#key active}

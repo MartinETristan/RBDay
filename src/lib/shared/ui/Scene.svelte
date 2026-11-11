@@ -13,6 +13,7 @@
 		unit,
 		music,
 		seconds,
+		manual = false,
 		narrow = false,
 		class: className = '',
 		bg,
@@ -27,6 +28,8 @@
 		music?: string;
 		/** Duración en el modo historia (por defecto SCENE_SECONDS). */
 		seconds?: number;
+		/** Si es true, el modo historia no avanza solo desde esta escena. */
+		manual?: boolean;
 		narrow?: boolean;
 		class?: string;
 		bg?: Snippet;
@@ -41,6 +44,7 @@
 	data-unit={unit}
 	data-music={music}
 	data-seconds={seconds}
+	data-manual={manual ? '' : undefined}
 	class="scene-circles relative z-10 flex min-h-svh w-full shrink-0 flex-col items-center justify-center overflow-hidden px-6 py-24 text-center horiz:h-svh horiz:min-h-0 horiz:px-16 horiz:py-16 {narrow
 		? 'horiz:w-[70vw]'
 		: 'horiz:w-screen'} {className}"
