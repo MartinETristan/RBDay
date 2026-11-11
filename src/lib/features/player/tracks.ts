@@ -27,7 +27,8 @@ export const tracks: Track[] = [
 		title: "Don't Go Breaking My Heart",
 		artist: 'Elton John & Kiki Dee',
 		src: '/music/dont-go-breaking-my-heart.mp3',
-		role: 'juntos'
+		role: 'juntos',
+		key: 'dont-go'
 	},
 	{ title: 'Oiga', artist: 'Johan Sebastian', src: '/music/oiga.mp3', role: 'juntos' },
 	{
@@ -38,6 +39,15 @@ export const tracks: Track[] = [
 	},
 	// Canciones fijas de escenas concretas (no entran en la rotación).
 	{ title: 'Fondo', artist: '', src: '/music/bg-fondo.mp3', role: 'escena', key: 'bienvenida' },
+	{ title: 'In October', artist: '', src: '/music/in_october.mp3', role: 'escena', key: 'in-october' },
+	{
+		title: 'Chiquitita',
+		artist: 'ABBA',
+		src: '/music/chiquitita.mp3',
+		role: 'escena',
+		key: 'chiquitita'
+	},
+	{ title: 'Galería', artist: '', src: '/music/bg-galeria.mp3', role: 'escena', key: 'galeria' },
 	{ title: 'Birthday', artist: '', src: '/music/birthday_slow.mp3', role: 'escena', key: 'carta' },
 	{
 		title: "Don't Go Breaking My Heart",
@@ -53,3 +63,12 @@ export const ROTATION_COUNT = 4;
 
 /** Canciones que hacen fade-in cada vez que empiezan de nuevo. */
 export const FADE_IN_ON_LOOP = new Set(['bienvenida']);
+
+/**
+ * Canciones que rotan en los slides sin música propia (claves de `tracks`, en orden).
+ * Difiere del reproductor de "Nuestra canción": ahí siguen Oiga y Hoy tengo ganas de ti.
+ */
+const SLIDE_ROTATION_KEYS = ['ophelia', 'in-october', 'dont-go', 'chiquitita'];
+export const SLIDE_ROTATION: number[] = SLIDE_ROTATION_KEYS.map((k) =>
+	tracks.findIndex((t) => t.key === k)
+);

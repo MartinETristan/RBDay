@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, untrack } from 'svelte';
 	import { nav, scroll, scrollToElement } from '#lib/shared/scroll/lenis.svelte.ts';
-	import { ROTATION_COUNT } from './tracks.ts';
+	import { SLIDE_ROTATION } from './tracks.ts';
 	import { musicForKey, musicForTrack } from './music.svelte.ts';
 	import { MANUAL_IDLE_SECONDS, autoMove, SCENE_SECONDS, player } from './player.svelte.ts';
 
@@ -39,7 +39,7 @@
 		const units = keys.filter((k, i) => k !== keys[i - 1]);
 		const first = Math.max(units.indexOf('capitulo-1'), 0);
 		const n = Math.max(0, units.indexOf(keys[active]) - first);
-		untrack(() => musicForTrack(Math.floor(n / 2) % ROTATION_COUNT));
+		untrack(() => musicForTrack(SLIDE_ROTATION[Math.floor(n / 2) % SLIDE_ROTATION.length]));
 	});
 
 	const secondsOf = (i: number) => Number(scenes[i]?.dataset.seconds) || SCENE_SECONDS;

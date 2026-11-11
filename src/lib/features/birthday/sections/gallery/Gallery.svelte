@@ -37,6 +37,7 @@
 	<Scene
 		id="galeria-{page + 1}"
 		unit="galeria"
+		music="galeria"
 		title="Tus momentos"
 		ghost="♥"
 		class={tones[page % tones.length]}
