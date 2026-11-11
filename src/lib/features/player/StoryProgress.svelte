@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { nav, scroll, scrollToElement } from '#lib/shared/scroll/lenis.svelte.ts';
-	import { tracks } from './tracks.ts';
-	import { musicForTrack } from './music.svelte.ts';
-	import { SCENE_SECONDS, player } from './player.svelte.ts';
+	import { ROTATION_COUNT } from './tracks.ts';
+	import { musicForKey, musicForTrack } from './music.svelte.ts';
+	import { MANUAL_IDLE_SECONDS, autoMove, SCENE_SECONDS, player } from './player.svelte.ts';
 
 	let scenes = $state<HTMLElement[]>([]);
 	let active = $state(0);
@@ -32,17 +32,42 @@
 	// primera). Las escenas que comparten `data-unit` (p. ej. toda la galería) cuentan como una.
 	$effect(() => {
 		if (!scenes.length) return;
+		const fixed = scenes[active]?.dataset.music;
+		// untrack: la música cambia solo al cambiar de escena, no cuando se elige otra canción a mano.
+		if (fixed) return untrack(() => musicForKey(fixed));
 		const keys = scenes.map((s) => s.dataset.unit ?? s.id);
 		const units = keys.filter((k, i) => k !== keys[i - 1]);
 		const first = Math.max(units.indexOf('capitulo-1'), 0);
 		const n = Math.max(0, units.indexOf(keys[active]) - first);
-		musicForTrack(Math.floor(n / 2) % tracks.length);
+		untrack(() => musicForTrack(Math.floor(n / 2) % ROTATION_COUNT));
 	});
+
+	const secondsOf = (i: number) => Number(scenes[i]?.dataset.seconds) || SCENE_SECONDS;
 
 	const go = (i: number) => !nav.locked && scenes[i] && scrollToElement(scenes[i]);
 
-	// Modo historia: cada escena dura SCENE_SECONDS y luego pasa a la siguiente.
-	// Si la persona cambia de escena (barra, flechas, scroll), el tiempo se reinicia.
+	// Modo historia: cada escena dura sus segundos y luego pasa a la siguiente.
+	// Si la persona cambia de escena a mano (barra, flechas, scroll), el modo historia se pausa;
+	// tras MANUAL_IDLE_SECONDS quieta en una escena, vuelve a correr con el tiempo de esa escena.
+	let manual = $state(false);
+	let autoTarget = -1;
+	let prevActive = -1;
+
+	$effect(() => {
+		const a = active;
+		const changed = prevActive !== -1 && a !== prevActive;
+		prevActive = a;
+		if (!changed || !player.playing) return;
+		if (a === autoTarget || autoMove.next) manual = false;
+		else manual = true;
+		autoTarget = -1;
+		autoMove.next = false;
+	});
+
+	$effect(() => {
+		if (!player.playing) manual = false;
+	});
+
 	$effect(() => {
 		if (!player.playing || !scenes.length) return;
 		const current = active;
@@ -50,7 +75,14 @@
 			player.playing = false; // llegó al final
 			return;
 		}
-		const timer = setTimeout(() => go(current + 1), SCENE_SECONDS * 1000);
+		if (manual) {
+			const idle = setTimeout(() => (manual = false), MANUAL_IDLE_SECONDS * 1000);
+			return () => clearTimeout(idle);
+		}
+		const timer = setTimeout(() => {
+			autoTarget = current + 1;
+			go(current + 1);
+		}, secondsOf(current) * 1000);
 		return () => clearTimeout(timer);
 	});
 </script>
@@ -75,13 +107,13 @@
 			class="group flex h-4 flex-1 items-center {nav.locked ? 'cursor-default' : 'cursor-pointer'}"
 		>
 			<span class="relative block h-1.5 w-full overflow-hidden rounded-full bg-rose/30">
-				{#if i < active || (i === active && !player.playing)}
+				{#if i < active || (i === active && (!player.playing || manual))}
 					<span class="absolute inset-0 bg-rose-400"></span>
 				{:else if i === active}
 					{#key active}
 						<span
 							class="seg-fill absolute inset-y-0 left-0 bg-rose-400"
-							style:--dur="{SCENE_SECONDS}s"
+							style:--dur="{secondsOf(i)}s"
 						></span>
 					{/key}
 				{/if}

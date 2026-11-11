@@ -3,6 +3,7 @@
 	import { lockNavigation } from '#lib/shared/scroll/lenis.svelte.ts';
 	import PlayerControls from '#lib/features/player/PlayerControls.svelte';
 	import StoryProgress from '#lib/features/player/StoryProgress.svelte';
+	import Welcome from './sections/welcome/Welcome.svelte';
 	import Footer from './sections/footer/Footer.svelte';
 	import Gallery from './sections/gallery/Gallery.svelte';
 	import Hero from './sections/hero/Hero.svelte';
@@ -28,6 +29,7 @@
 <!-- Estilo Wrapped: cada sección es una escena. Escritorio: en fila (scroll horizontal). Celular: en columna. -->
 <main class="relative horiz:flex horiz:w-max horiz:flex-row">
 	<Hero />
+	<Welcome />
 	<Story {now} />
 	<Numbers {now} />
 	<Gallery />

@@ -18,5 +18,5 @@ export const tripPhotos = ['/photos/nosotros5.webp', '/photos/nosotros31.webp'];
 /** Mensajes: no se cuentan, se dice como es. */
 export const messages = {
 	big: 'Todos los días',
-	detail: 'nos escribimos por Instagram'
+	detail: 'desde que somos novios'
 };

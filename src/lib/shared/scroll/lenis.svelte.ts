@@ -115,13 +115,15 @@ function nativeScrollTo(el: HTMLElement, immediate = false) {
 	nativeAnim = requestAnimationFrame(tick);
 }
 
-/** Sube al inicio con scroll suave (Lenis) o directo si Lenis está desactivado. */
+/**
+ * Vuelve a la primera escena con la misma transición que el resto (animada y con `lock`), en vez de
+ * `scrollTo(0)` sin bloqueo: ese barría todas las escenas y podía quedar una de más antes de asentarse.
+ */
 export function scrollToTop() {
-	if (instance) instance.scrollTo(0, { duration: 1.6 });
-	else {
-		const first = sceneList()[0];
-		if (first) nativeScrollTo(first);
-	}
+	const first = sceneList()[0];
+	if (!first) return;
+	if (instance) instance.scrollTo(first, { duration: 1.6, lock: true, force: true });
+	else nativeScrollTo(first);
 }
 
 /** Lleva una escena al inicio de la pantalla (horizontal en escritorio, vertical en celular). */

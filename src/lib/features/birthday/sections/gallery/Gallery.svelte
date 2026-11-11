@@ -98,9 +98,9 @@
 	<dialog
 		use:modal
 		onclose={() => (selected = null)}
-		onclick={(e) => e.target === e.currentTarget && e.currentTarget.close()}
+		onclick={(e) => e.currentTarget.close()}
 		aria-label={selected.alt}
-		class="m-auto max-h-[92svh] w-[min(92vw,560px)] overflow-visible rounded-2xl bg-transparent p-0 backdrop:bg-berry/70 backdrop:backdrop-blur-sm"
+		class="m-auto cursor-pointer max-h-[92svh] w-[min(92vw,560px)] overflow-visible rounded-2xl bg-transparent p-0 backdrop:bg-berry/70 backdrop:backdrop-blur-sm"
 	>
 		<div class="lightbox rounded-2xl bg-white px-3 pt-3 pb-5 shadow-[0_8px_0_var(--color-rose)]">
 			{#if selected.type === 'video'}
@@ -111,14 +111,14 @@
 					muted
 					loop
 					playsinline
-					class="max-h-[68svh] w-full rounded-lg object-contain"
+					class="mx-auto block h-auto max-h-[68svh] w-auto max-w-full rounded-2xl"
 				></video>
 			{:else}
 				<img
 					src={selected.src}
 					alt={selected.alt}
 					decoding="async"
-					class="max-h-[68svh] w-full rounded-lg object-contain"
+					class="mx-auto block h-auto max-h-[68svh] w-auto max-w-full rounded-2xl"
 				/>
 			{/if}
 			{#if selected.date || selected.text}
@@ -132,23 +132,6 @@
 				</div>
 			{/if}
 		</div>
-		<button
-			type="button"
-			aria-label="Cerrar"
-			onclick={(e) => e.currentTarget.closest('dialog')?.close()}
-			class="absolute -top-3 -right-3 flex size-10 cursor-pointer items-center justify-center rounded-full bg-cream text-rose-400 shadow-[0_3px_0_var(--color-rose)]"
-		>
-			<svg
-				width="18"
-				height="18"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				stroke-width="2.6"
-				stroke-linecap="round"
-				aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg
-			>
-		</button>
 	</dialog>
 {/if}
 

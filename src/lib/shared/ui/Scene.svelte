@@ -11,6 +11,8 @@
 		title,
 		ghost,
 		unit,
+		music,
+		seconds,
 		narrow = false,
 		class: className = '',
 		bg,
@@ -21,6 +23,10 @@
 		ghost?: string;
 		/** Agrupa escenas para la música: las que comparten `unit` cuentan como una sola. */
 		unit?: string;
+		/** Clave de la canción fija de esta escena (ver `tracks.ts`). */
+		music?: string;
+		/** Duración en el modo historia (por defecto SCENE_SECONDS). */
+		seconds?: number;
 		narrow?: boolean;
 		class?: string;
 		bg?: Snippet;
@@ -33,6 +39,8 @@
 	data-scene
 	data-title={title}
 	data-unit={unit}
+	data-music={music}
+	data-seconds={seconds}
 	class="scene-circles relative z-10 flex min-h-svh w-full shrink-0 flex-col items-center justify-center overflow-hidden px-6 py-24 text-center horiz:h-svh horiz:min-h-0 horiz:px-16 horiz:py-16 {narrow
 		? 'horiz:w-[70vw]'
 		: 'horiz:w-screen'} {className}"

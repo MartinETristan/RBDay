@@ -4,7 +4,7 @@
 	import { letter } from './letter.data.ts';
 </script>
 
-<Scene id="carta" title="Tu carta" class="bg-[#f7b3cf]">
+<Scene id="carta" title="Tu carta" music="carta" seconds={30} class="bg-[#f7b3cf]">
 	<article
 		use:reveal
 		class="flex w-full max-w-180 flex-col gap-4 rounded-[28px] bg-cream p-[clamp(24px,6vw,56px)] text-left shadow-[0_10px_0_var(--color-rose-deep)] horiz:gap-[1.8svh] horiz:p-[clamp(24px,5svh,56px)]"

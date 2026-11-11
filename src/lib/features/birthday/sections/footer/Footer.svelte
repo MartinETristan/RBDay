@@ -3,7 +3,7 @@
 	import Scene from '#lib/shared/ui/Scene.svelte';
 </script>
 
-<Scene id="fin" title="Fin" class="bg-berry! text-candy">
+<Scene id="fin" title="Fin" music="fin" class="bg-berry! text-candy">
 	<p class="text-[clamp(32px,8vw,56px)] leading-tight font-bold horiz:text-[clamp(32px,7svh,64px)]">
 		Feliz cumpleaños 25, Rosario
 	</p>

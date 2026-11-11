@@ -9,6 +9,31 @@
 
 	let { now }: { now: number } = $props();
 
+	// Marca los días de la semana uno por uno, cuando terminan las animaciones de texto
+	// (la última burbuja entra a ~1.5 s). Al salir de pantalla se desmarcan para repetir.
+	const MARK_AFTER = 1700;
+	function markDays(node: HTMLElement) {
+		let timer: ReturnType<typeof setTimeout>;
+		const io = new IntersectionObserver(
+			([entry]) => {
+				clearTimeout(timer);
+				if (entry.isIntersecting) {
+					timer = setTimeout(() => node.classList.add('marked'), MARK_AFTER);
+				} else {
+					node.classList.remove('marked');
+				}
+			},
+			{ threshold: 0.6 }
+		);
+		io.observe(node);
+		return {
+			destroy() {
+				clearTimeout(timer);
+				io.disconnect();
+			}
+		};
+	}
+
 	// Domingos de cita desde el primero (inclusive).
 	let sundays = $derived(
 		now < DATES_START ? 0 : Math.floor((now - DATES_START) / (7 * 86400000)) + 1
@@ -95,14 +120,50 @@
 	</h2>
 	<p use:reveal={240} class={label}>{messages.detail}</p>
 	<!-- Una burbuja por día de la semana -->
-	<div class="flex gap-2" aria-hidden="true">
+	<div use:markDays class="week flex gap-2" aria-hidden="true">
 		{#each ['L', 'M', 'M', 'J', 'V', 'S', 'D'] as d, i (i)}
 			<span
 				use:reveal={320 + i * 70}
-				class="flex size-10 items-center justify-center rounded-full bg-cream text-[15px] font-bold text-rose-400 shadow-[0_3px_0_var(--color-rose)]"
+				style:--i={i}
+				class="day flex size-10 items-center justify-center rounded-full bg-cream text-[15px] font-bold text-rose-400 shadow-[0_3px_0_var(--color-rose)]"
 			>
 				{d}
 			</span>
 		{/each}
 	</div>
 </Scene>
+
+<style>
+	/* .reveal ya anima opacity/transform; aquí se anima el "marcado" por separado. */
+	.day {
+		transition:
+			opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+			transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+			background-color 0.3s ease,
+			color 0.3s ease;
+	}
+	.week:global(.marked) .day {
+		animation: day-mark 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+		animation-delay: calc(var(--i) * 130ms);
+	}
+	@keyframes day-mark {
+		0% {
+			background-color: var(--color-cream);
+			color: var(--color-rose-deep);
+			transform: scale(1);
+		}
+		60% {
+			transform: scale(1.3);
+		}
+		100% {
+			background-color: var(--color-rose-deep);
+			color: var(--color-cream);
+			transform: scale(1);
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.week:global(.marked) .day {
+			animation-duration: 0.01s;
+		}
+	}
+</style>

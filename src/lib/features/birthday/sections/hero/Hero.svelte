@@ -1,22 +1,24 @@
 <script lang="ts">
 	import RisingHearts from '#lib/features/hearts/RisingHearts.svelte';
 	import { launchConfetti } from '#lib/features/confetti/confetti.svelte.ts';
-	import { startMusic } from '#lib/features/player/music.svelte.ts';
-	import { player } from '#lib/features/player/player.svelte.ts';
+	import { musicForKey, startMusic } from '#lib/features/player/music.svelte.ts';
+	import { autoMove, player } from '#lib/features/player/player.svelte.ts';
 	import { lockNavigation, scrollToElement } from '#lib/shared/scroll/lenis.svelte.ts';
 	import Scene from '#lib/shared/ui/Scene.svelte';
 
-	/** Inicia la música y el modo historia (cada escena dura 15 s) desde el primer capítulo. */
+	/** Inicia la música y el modo historia (cada escena dura 15 s) desde la bienvenida. */
 	function start() {
 		lockNavigation(false);
+		musicForKey('bienvenida');
 		startMusic();
 		player.playing = true;
-		const first = document.getElementById('capitulo-1');
+		autoMove.next = true;
+		const first = document.getElementById('bienvenida');
 		if (first) scrollToElement(first);
 	}
 </script>
 
-<Scene id="inicio" title="Inicio" class="pastel-bg">
+<Scene id="inicio" title="Inicio" music="silencio" class="pastel-bg">
 	{#snippet bg()}
 		<RisingHearts />
 		<!-- Cinta de texto en movimiento -->

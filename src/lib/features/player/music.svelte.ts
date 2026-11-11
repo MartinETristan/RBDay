@@ -1,4 +1,4 @@
-import { tracks } from './tracks.ts';
+import { FADE_IN_ON_LOOP, tracks } from './tracks.ts';
 
 /** Estado de la música de fondo. */
 export const music = $state({ started: false, muted: false, index: 0, failed: false });
@@ -13,14 +13,31 @@ let current: HTMLAudioElement | null = null;
 const fades = new Map<HTMLAudioElement, number>();
 /** Un reproductor por canción: al volver a una canción se reutiliza (no se descarga otra vez). */
 const players: HTMLAudioElement[] = [];
+/** Volumen propio: Safari/iOS ignora `audio.volume` (siempre lee 1), así que el fade no puede depender de él. */
+const vols = new WeakMap<HTMLAudioElement, number>();
+function setVol(a: HTMLAudioElement, v: number) {
+	vols.set(a, v);
+	a.volume = v;
+}
 
 function audioFor(index: number) {
 	let a = players[index];
 	if (!a) {
 		const created = new Audio(tracks[index].src);
 		created.preload = 'none'; // se descarga solo al reproducirla
-		created.loop = true;
-		created.volume = 0;
+		const fadeLoop = FADE_IN_ON_LOOP.has(tracks[index].key ?? '');
+		created.loop = !fadeLoop;
+		setVol(created, 0);
+		if (fadeLoop) {
+			// Al terminar, vuelve a empezar desde silencio con un fade-in.
+			created.addEventListener('ended', () => {
+				if (current !== created) return;
+				setVol(created, 0);
+				created.currentTime = 0;
+				created.play().catch(() => {});
+				ramp(created, VOLUME);
+			});
+		}
 		created.addEventListener('error', () => {
 			if (current === created) music.failed = true;
 		});
@@ -34,9 +51,9 @@ function ramp(a: HTMLAudioElement, to: number, then?: () => void) {
 	clearInterval(fades.get(a));
 	const step = (VOLUME * STEP_MS) / CROSSFADE_MS;
 	const id = window.setInterval(() => {
-		const v = a.volume;
+		const v = vols.get(a) ?? 0;
 		const nv = v < to ? Math.min(to, v + step) : Math.max(to, v - step);
-		a.volume = nv;
+		setVol(a, nv);
 		if (nv === to) {
 			clearInterval(id);
 			fades.delete(a);
@@ -53,6 +70,8 @@ function crossfadeTo(index: number) {
 	}
 	const old = current;
 	const a = audioFor(index);
+	// Seguridad: ninguna otra canción puede seguir sonando (Safari).
+	for (const p of players) if (p && p !== a && p !== old && !p.paused) p.pause();
 	a.muted = music.muted;
 	// Si aún se estaba desvaneciendo, `ramp` cancela ese fade y sube desde el volumen actual.
 	if (a.paused) a.play().catch(() => {});
@@ -77,6 +96,24 @@ export function startMusic() {
 export function musicForTrack(i: number) {
 	wanted = i % tracks.length;
 	if (music.started) crossfadeTo(wanted);
+}
+
+/** Desvanece y pausa la música actual (escenas sin música). */
+function silence() {
+	if (!current) return;
+	const old = current;
+	current = null;
+	ramp(old, 0, () => old.pause());
+}
+
+/** Cambia a la canción fija de una escena (por su `key`). */
+export function musicForKey(key: string) {
+	if (key === 'silencio') return silence();
+	const i = tracks.findIndex((t) => t.key === key);
+	if (i < 0) return;
+	musicForTrack(i);
+	// Reinicia la canción reutilizando el mismo reproductor (no se pide de nuevo).
+	if (tracks[i].restart && music.started && current === players[i]) current.currentTime = 0;
 }
 
 export function toggleMute() {
