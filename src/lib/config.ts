@@ -1,7 +1,7 @@
 /** Configuración global de la página. */
 
-/** Medianoche (hora local del dispositivo) del 14 de noviembre de 2026. */
-export const BIRTHDAY = new Date(2026, 10, 14, 0, 0, 0).getTime();
+/** 14 de noviembre de 2026 a las 3:00 PM (hora local del dispositivo). */
+export const BIRTHDAY = new Date(2026, 10, 14, 15, 0, 0).getTime();
 
 /**
  * Código para entrar a la página (pantalla de candado antes del contador y del cumpleaños).
